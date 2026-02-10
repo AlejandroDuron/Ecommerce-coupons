@@ -26,7 +26,7 @@ La Cuponera es una aplicación web fullstack desarrollada con React y Supabase q
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/usuario/la-cuponera.git
+git clone https://github.com/AlejandroDuron/Ecommerce-coupons
 cd la-cuponera
 ```
 
