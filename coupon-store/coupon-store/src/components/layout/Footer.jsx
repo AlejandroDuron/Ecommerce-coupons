@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div className={`container ${styles.inner}`}>
         <div className={styles.brand}>
-          <span className={styles.logo}>⚡ DescuentoFuture</span>
+          <span className={styles.logo}>⚡ La Cuponera</span>
           <p className={styles.tagline}>Redefiniendo el ahorro inteligente para la era digital.</p>
         </div>
 

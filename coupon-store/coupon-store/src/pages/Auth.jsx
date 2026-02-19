@@ -99,7 +99,7 @@ export default function Auth() {
       <div className={styles.formPanel}>
         <div className={styles.formCard}>
           <div className={styles.logo}>
-            <Zap size={17} color="var(--green)" /> DescuentoFuture
+            <Zap size={17} color="var(--green)" /> La Cuponera
           </div>
 
           {mode !== 'forgot' && (

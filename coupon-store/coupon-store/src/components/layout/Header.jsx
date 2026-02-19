@@ -43,7 +43,7 @@ export default function Header() {
         {/* ── Logo ── */}
         <Link to="/" className={styles.logo}>
           <Zap size={18} color="var(--green)" strokeWidth={2.5} />
-          <span>DescuentoFuture</span>
+          <span>La Cuponera</span>
         </Link>
 
         {/* ── Buscador ── */}
