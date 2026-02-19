@@ -1,0 +1,86 @@
+/* pages/MyCoupons.module.css */
+.main { padding: 2rem 0 5rem; }
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.avatar {
+  width: 56px;
+  height: 56px;
+  background: var(--green);
+  color: var(--black);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.title { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.03em; }
+.sub { color: var(--muted); font-size: 0.85rem; margin-top: 0.15rem; }
+
+/* Tabs */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  gap: 0;
+  margin-bottom: 2rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.tab:hover { color: var(--white); }
+.tabActive { color: var(--green); border-bottom-color: var(--green); }
+
+.count {
+  background: var(--dark3);
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+}
+.tabActive .count { background: var(--green-bg); color: var(--green); }
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 640px)  { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* Promo banner */
+.promoBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--green-bg);
+  border: 1px solid rgba(182,245,66,0.3);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+.promoTitle { font-size: 1rem; font-weight: 700; }
+.promoText { color: var(--muted); font-size: 0.85rem; margin-top: 0.25rem; }

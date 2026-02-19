@@ -1,0 +1,56 @@
+/* components/offers/OfferCard.module.css */
+.card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.discountBadge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 2;
+  background: var(--green);
+  color: var(--black);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+}
+
+.imageWrap { width: 100%; aspect-ratio: 16/9; overflow: hidden; background: var(--dark2); }
+.image { width: 100%; height: 100%; object-fit: cover; }
+.placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--border);
+  background: var(--dark2);
+}
+
+.body { padding: 1rem; display: flex; flex-direction: column; gap: 0.6rem; flex: 1; }
+
+.companyRow { display: flex; align-items: center; justify-content: space-between; }
+.company { font-size: 0.75rem; color: var(--muted); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; }
+.rating { font-size: 0.75rem; color: #f59e0b; font-weight: 600; display: flex; align-items: center; gap: 0.2rem; }
+
+.title { font-size: 0.95rem; font-weight: 700; color: var(--white); line-height: 1.3; }
+
+.priceRow { display: flex; align-items: baseline; gap: 0.5rem; }
+.finalPrice { font-size: 1.2rem; font-weight: 800; color: var(--green); font-family: var(--font-mono); }
+.originalPrice { font-size: 0.8rem; color: var(--muted); text-decoration: line-through; }
+
+.expiry { font-size: 0.75rem; color: var(--muted); display: flex; align-items: center; gap: 0.3rem; }
+.urgent { color: #f59e0b; }
+
+.actions { display: flex; gap: 0.5rem; margin-top: auto; padding-top: 0.5rem; }
+.detailBtn { flex: 1; font-size: 0.7rem; padding: 0.5rem 0.75rem; justify-content: center; }
+.buyBtn { flex: 1; font-size: 0.7rem; padding: 0.5rem 0.75rem; justify-content: center; }
+.buyBtn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }

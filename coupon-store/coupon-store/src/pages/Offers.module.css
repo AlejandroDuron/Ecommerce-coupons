@@ -1,0 +1,67 @@
+/* pages/Offers.module.css */
+.main { padding: 2rem 0 4rem; }
+
+.topBar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+.title { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.03em; }
+.count { color: var(--muted); font-size: 0.85rem; margin-top: 0.25rem; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+@media (min-width: 1024px) {
+  .layout { grid-template-columns: 260px 1fr; }
+}
+
+/* Sidebar - mobile: oculta / abierta como drawer */
+.sidebar { display: none; }
+.sidebarOpen {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 150;
+  overflow-y: auto;
+  background: var(--black);
+  padding: 1rem;
+}
+@media (min-width: 1024px) {
+  .sidebar { display: block; position: static; }
+  .sidebarOpen { position: static; background: transparent; padding: 0; }
+}
+
+.content { min-width: 0; }
+
+/* Paginación */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 2.5rem;
+  flex-wrap: wrap;
+}
+.pages { display: flex; gap: 0.25rem; }
+.pageBtn {
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  width: 36px;
+  height: 36px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.pageBtn:hover { border-color: var(--green); color: var(--white); }
+.pageBtnActive { background: var(--green); border-color: var(--green); color: var(--black); font-weight: 700; }
