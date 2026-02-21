@@ -62,7 +62,7 @@ const useAppStore = create((set, get) => ({
             )
           )
         `)
-        .eq('estado', 'Aprobada'); // Solo mostramos las ofertas aprobadas
+        .eq('estado', 'Oferta aprobada');
 
       if (error) throw error;
 
