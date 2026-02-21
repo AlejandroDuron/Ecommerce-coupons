@@ -25,10 +25,6 @@ export default function OfferDetail() {
     navigate('/checkout')
   }
 
-const isExpired = offer.expires_at ? new Date(offer.expires_at) < new Date() : false;
-const isSoldOut = offer.stock <= 0;
-const canBuy = !isExpired && !isSoldOut;
-
   if (loading && !offer) return <Loader fullscreen />
   if (!loading && !offer) {
     return (
@@ -111,17 +107,10 @@ const canBuy = !isExpired && !isSoldOut;
               <div className={`${styles.expiry} ${urgent ? styles.urgent : ''}`}>
                 {urgent ? '⏰' : '📅'} {expiryLabel(offer.expires_at)}
               </div>
-              <button 
-                className={`btn btn-primary ${styles.buyBtn}`} 
-                onClick={handleBuy}
-                disabled={!canBuy && !inCart}
-              >
-              {inCart ? 'En el carrito' : 
-                isExpired ? 'Oferta Expirada' : 
-                isSoldOut ? 'Agotado' : 'Añadir al carrito'}
-              </button>
 
-              
+              <button className={`btn btn-primary ${styles.buyBtn}`} onClick={handleBuy}>
+                {inCart ? 'Ir al checkout →' : 'Comprar Cupón →'}
+              </button>
 
               <p className={styles.secure}>🔒 Pago seguro garantizado</p>
             </div>
