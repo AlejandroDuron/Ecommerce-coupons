@@ -1,95 +1,89 @@
-// context/AuthContext.jsx
-import { createContext, useContext, useReducer, useEffect } from 'react'
-import { supabase } from '../utils/supabaseClient'
+import { useState } from 'react'
+import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
+import styles from './Auth.module.css'
 
-// ─── Estado inicial ───────────────────────────────────────
-const initialState = {
-  user:    null,   // objeto de usuario de Supabase
-  loading: true,   // true mientras se verifica la sesión
-  error:   null,
-}
+export default function Auth() {
+  const [isLogin, setIsLogin] = useState(true)
+  const { login, register, error, loading } = useAuth()
+  const navigate = useNavigate()
 
-// ─── Reducer ─────────────────────────────────────────────
-function authReducer(state, action) {
-  switch (action.type) {
-    case 'SET_USER':    return { ...state, user: action.payload, loading: false, error: null }
-    case 'SET_LOADING': return { ...state, loading: action.payload }
-    case 'SET_ERROR':   return { ...state, error: action.payload, loading: false }
-    case 'LOGOUT':      return { ...initialState, loading: false }
-    default: return state
-  }
-}
-
-// ─── Context ──────────────────────────────────────────────
-const AuthContext = createContext(null)
-
-export function AuthProvider({ children }) {
-  const [state, dispatch] = useReducer(authReducer, initialState)
-
-  // Verificar sesión activa al montar
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      dispatch({ type: 'SET_USER', payload: session?.user ?? null })
-    })
-
-    // Escuchar cambios de sesión (login / logout)
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      dispatch({ type: 'SET_USER', payload: session?.user ?? null })
-    })
-
-    return () => listener.subscription.unsubscribe()
-  }, [])
-
-  // ─── Acciones ─────────────────────────────────────────
-  const login = async (email, password) => {
-    dispatch({ type: 'SET_LOADING', payload: true })
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) dispatch({ type: 'SET_ERROR', payload: error.message })
-    else dispatch({ type: 'SET_USER', payload: data.user })
-    return { data, error }
-  }
-
-  const register = async (email, password, nombres, apellidos, telefono, dui, direccion) => {
-  dispatch({ type: 'SET_LOADING', payload: true })
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: { 
-      data: { 
-        nombres,    
-        apellidos,  
-        telefono,   
-        dui,        
-        direccion,  
-        full_name: `${nombres} ${apellidos}`.trim() 
-      } 
-    },
+  // Estados para el formulario de Registro
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    nombres: '',
+    apellidos: '',
+    telefono: '',
+    dui: '',
+    direccion: ''
   })
-  if (error) dispatch({ type: 'SET_ERROR', payload: error.message })
-  else dispatch({ type: 'SET_USER', payload: data.user })
-  return { data, error }
-}
 
-  const logout = async () => {
-    await supabase.auth.signOut()
-    dispatch({ type: 'LOGOUT' })
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-  const resetPassword = async (email) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email)
-    return { error }
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    
+    if (isLogin) {
+      const { error } = await login(formData.email, formData.password)
+      if (!error) navigate('/')
+    } else {
+      // Llamamos a la función register con todos los parámetros requeridos
+      const { error } = await register(
+        formData.email, 
+        formData.password, 
+        formData.nombres, 
+        formData.apellidos, 
+        formData.telefono, 
+        formData.dui, 
+        formData.direccion
+      )
+      if (!error) {
+        alert('Registro exitoso. Revisa tu correo para confirmar la cuenta.')
+        setIsLogin(true)
+      }
+    }
   }
 
   return (
-    <AuthContext.Provider value={{ ...state, login, register, logout, resetPassword }}>
-      {children}
-    </AuthContext.Provider>
-  )
-}
+    <div className={styles.authContainer}>
+      <div className={styles.authCard}>
+        <h2>{isLogin ? 'Iniciar Sesión' : 'Registro de Cliente'}</h2>
+        
+        {error && <div className={styles.errorMessage}>{error}</div>}
 
-// Hook de acceso rápido
-export const useAuth = () => {
-  const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth debe usarse dentro de <AuthProvider>')
-  return ctx
+        <form onSubmit={handleSubmit} className={styles.form}>
+          {!isLogin && (
+            <>
+              <div className={styles.row}>
+                <input type="text" name="nombres" placeholder="Nombres" required onChange={handleChange} />
+                <input type="text" name="apellidos" placeholder="Apellidos" required onChange={handleChange} />
+              </div>
+              <div className={styles.row}>
+                <input type="text" name="dui" placeholder="DUI (00000000-0)" required onChange={handleChange} />
+                <input type="tel" name="telefono" placeholder="Teléfono" required onChange={handleChange} />
+              </div>
+              <textarea name="direccion" placeholder="Dirección completa" required onChange={handleChange}></textarea>
+            </>
+          )}
+
+          <input type="email" name="email" placeholder="Correo electrónico" required onChange={handleChange} />
+          <input type="password" name="password" placeholder="Contraseña" required onChange={handleChange} />
+
+          <button type="submit" disabled={loading} className="btn btn-primary">
+            {loading ? 'Procesando...' : isLogin ? 'Entrar' : 'Crear Cuenta'}
+          </button>
+        </form>
+
+        <p className={styles.switchText}>
+          {isLogin ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?'}
+          <button onClick={() => setIsLogin(!isLogin)} className={styles.linkBtn}>
+            {isLogin ? 'Regístrate aquí' : 'Inicia sesión'}
+          </button>
+        </p>
+      </div>
+    </div>
+  )
 }
