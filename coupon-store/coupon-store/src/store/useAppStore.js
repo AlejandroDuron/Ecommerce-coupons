@@ -89,22 +89,51 @@ const useAppStore = create((set, get) => ({
     }
 },
 
-  // ── Fetch Cupones del usuario ──────────────────────────
+  //Fetch Cupones del usuario
   fetchUserCoupons: async (userId) => {
-    set({ loading: true })
+    set({ loading: true, error: null })
     try {
+      // Consultamos la tabla 'cupones', trayendo la información de la oferta y la empresa
       const { data, error } = await supabase
-        .from('user_coupons')
-        .select('*, offers(*)')
-        .eq('user_id', userId)
+        .from('cupones')
+        .select(`
+          codigo_unico,
+          estado_cupon,
+          fecha_compra,
+          fecha_canje,
+          ofertas (
+            id,
+            titulo,
+            empresas (
+              nombre_empresa,
+              rubros ( nombre_rubro )
+            )
+          )
+        `)
+        .eq('id_cliente', userId) // Filtramos por el ID del usuario logueado
 
-      if (error || !data?.length) {
-        set({ userCoupons: MOCK_USER_COUPONS, loading: false })
-      } else {
-        set({ userCoupons: data, loading: false })
-      }
-    } catch {
-      set({ userCoupons: MOCK_USER_COUPONS, loading: false })
+      if (error) throw error;
+
+      // Mapeamos los datos al formato que espera el frontend
+      const formattedCoupons = data.map(cupon => ({
+        id: cupon.codigo_unico, // Usamos el código único como ID principal
+        code: cupon.codigo_unico,
+        status: cupon.estado_cupon === 'Disponible' ? 'active' : 
+                cupon.estado_cupon === 'Canjeado' ? 'used' : 'expired',
+        title: cupon.ofertas?.titulo || 'Oferta Desconocida',
+        company: cupon.ofertas?.empresas?.nombre_empresa || 'Empresa Desconocida',
+        category: cupon.ofertas?.empresas?.rubros?.nombre_rubro || 'General',
+        purchased_at: cupon.fecha_compra,
+        // En la BD el cupón no tiene fecha de expiración, so la omitimos o 
+        // podríamos traerla de la oferta. Por ahora, lo dejaremos asi.
+      }));
+
+      set({ userCoupons: formattedCoupons, loading: false })
+      
+    } catch (error) {
+      console.error('Error fetching user coupons:', error);
+      // Si falla, ya NO mostramos los mocks, mostramos vacío o el error real
+      set({ userCoupons: [], error: error.message, loading: false })
     }
   },
 
