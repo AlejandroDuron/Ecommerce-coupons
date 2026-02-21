@@ -9,7 +9,7 @@ import Loader from '../components/ui/Loader'
  *
  * MODO DEMO
  */
-const DEV_BYPASS = true  // Cambiar a true para saltear auth en desarrollo
+const DEV_BYPASS = false
 
 export default function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
