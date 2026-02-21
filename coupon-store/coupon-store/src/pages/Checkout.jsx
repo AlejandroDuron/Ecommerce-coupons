@@ -30,8 +30,9 @@ function StepCart({ items, total, savings, onNext }) {
                   <span className={styles.itemTitle}>{offer.titulo}</span>
                 </div>
                 <div className={styles.itemPrices}>
-                  <span className={styles.itemFinal}>{formatPrice(offer.precio_oferta)}</span>
-                  <span className={styles.itemOrig}>{formatPrice(offer.precio_regular)}</span>
+                  {/* Buscamos el precio en varios posibles campos por seguridad */}
+                  <span className={styles.itemFinal}>{formatPrice(offer.precio_oferta || offer.final_price || offer.price)}</span>
+                  <span className={styles.itemOrig}>{formatPrice(offer.precio_regular || offer.original_price)}</span>
                 </div>
               </div>
             ))}
@@ -137,7 +138,7 @@ export default function Checkout() {
   const handlePay = async () => {
     setPaying(true)
     try {
-      //Guardamos la Orden en Supabase
+      // 1. Guardamos la Orden en Supabase
       const { data: orden, error: ordenError } = await supabase
         .from('ordenes')
         .insert([{ id_cliente: user.id, total_pagado: total }])
@@ -147,24 +148,27 @@ export default function Checkout() {
 
       const codes = []
 
-      //Procesamos cada producto del carrito
+      // 2. Procesamos cada producto del carrito
       for (const item of items) {
         const { offer, quantity } = item
 
-        //Guardamos Detalle de la Orden
+        // CORRECCIÓN: Buscamos el precio en varios posibles campos
+        const precioUnitario = offer.precio_oferta || offer.final_price || offer.price || 0;
+
+        // Guardamos Detalle de la Orden
         const { data: detalle, error: detalleError } = await supabase
           .from('detalle_orden')
           .insert([{
             id_orden: orden.id,
             id_oferta: offer.id,
             cantidad: quantity,
-            precio_unitario: offer.precio_oferta
+            precio_unitario: precioUnitario
           }])
           .select().single()
 
         if (detalleError) throw detalleError
 
-        //Generamos Cupones lo de los 7 digitos ya está
+        // 3. Generamos Cupones (Formato Empresa + 7 dígitos)
         for (let i = 0; i < quantity; i++) {
           const empresaCodigo = offer.empresas?.codigo_empresa || 'GEN'
           const numAleatorio = Math.floor(1000000 + Math.random() * 9000000)
@@ -185,6 +189,7 @@ export default function Checkout() {
         }
       }
 
+      // 4. Envío de EmailJS
       const templateParams = {
         to_name: user.user_metadata?.nombres || 'Cliente',
         to_email: user.email,
@@ -199,7 +204,8 @@ export default function Checkout() {
         templateParams,
         'ftp4H_okMNH98WJgn'
       )
-      //Mostramos códigos, limpiamos carrito
+      
+      // 5. Finalizar proceso
       setGeneratedCodes(codes)
       clearCart()
       setStep(3)
