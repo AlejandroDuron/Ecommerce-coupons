@@ -1,6 +1,7 @@
-// components/coupons/CouponModal.jsx
 import { useEffect } from 'react'
 import styles from './CouponModal.module.css'
+// 1. Importamos la utilidad que creamos en src/utils/generatePDF.js
+import { downloadCouponPDF } from '../../utils/generatePDF'
 
 export default function CouponModal({ coupon, onClose }) {
   // Cerrar con Escape
@@ -10,15 +11,25 @@ export default function CouponModal({ coupon, onClose }) {
     return () => window.removeEventListener('keydown', fn)
   }, [onClose])
 
+  // 2. Función para manejar la descarga del PDF
+  const handleDownload = (e) => {
+    e.stopPropagation(); // Evita interferencias con el clic del modal
+    // Usamos el ID 'coupon-capture' que definiremos abajo
+    downloadCouponPDF('coupon-capture', `Cupon-${coupon.code}`);
+  }
+
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+      {/* 3. Agregamos el id="coupon-capture" al div principal del modal */}
+      <div id="coupon-capture" className={styles.modal} onClick={e => e.stopPropagation()}>
         <button className={styles.closeBtn} onClick={onClose}>✕</button>
 
         <div className={styles.icon}>{coupon.category === 'Gastronomía' ? '🍜' : '🎫'}</div>
         <h2 className={styles.company}>{coupon.company}</h2>
         <p className={styles.title}>{coupon.title}</p>
-        <p className={styles.hint}>Escanea o presenta este código en caja</p>
+        
+        {/* Actualizamos el texto según el requerimiento del DUI  */}
+        <p className={styles.hint}>Presenta este código y tu DUI en el establecimiento</p>
 
         {/* QR simulado */}
         <div className={styles.qrBox}>
@@ -34,9 +45,25 @@ export default function CouponModal({ coupon, onClose }) {
           <span className={styles.code}>{coupon.code}</span>
         </div>
 
-        <button className={`btn btn-primary ${styles.doneBtn}`} onClick={onClose}>
-          Listo ✓
-        </button>
+        {/* 4. Contenedor para los botones de acción */}
+        <div style={{ display: 'flex', gap: '10px', marginTop: '1.5rem', width: '100%' }}>
+          <button 
+            type="button"
+            className="btn btn-outline" 
+            style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+            onClick={handleDownload}
+          >
+            📥 PDF
+          </button>
+          
+          <button 
+            className={`btn btn-primary ${styles.doneBtn}`} 
+            style={{ flex: 2, marginTop: 0 }} 
+            onClick={onClose}
+          >
+            Listo ✓
+          </button>
+        </div>
       </div>
     </div>
   )
