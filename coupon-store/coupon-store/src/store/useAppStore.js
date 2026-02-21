@@ -75,7 +75,10 @@ const useAppStore = create((set, get) => ({
         featured: false,
       }));
 
-      set({ offers: formattedOffers, loading: false });
+      // set({ offers: formattedOffers, loading: false });
+      const uniqueCategories = [...new Set(formattedOffers.map(o => o.category).filter(Boolean))]
+      set({ offers: formattedOffers, categories: uniqueCategories, loading: false })
+
     } catch (error) {
       console.error('Error fetching offers:', error);
       set({ error: error.message, loading: false });
