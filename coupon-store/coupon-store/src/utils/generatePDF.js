@@ -6,19 +6,20 @@ export const downloadCouponPDF = async (elementId, filename) => {
   if (!element) return;
 
   const canvas = await html2canvas(element, {
-    scale: 2, // Mejora la calidad del texto
-    useCORS: true, // Permite cargar imágenes externas como el logo
+    scale: 2, // Mejora la calidad para que el texto no se vea borroso
+    useCORS: true, 
     logging: false,
+    backgroundColor: '#ffffff' // Asegura fondo blanco
   });
 
   const imgData = canvas.toDataURL('image/png');
   const pdf = new jsPDF('p', 'mm', 'a4');
   
-  // Calculamos el ancho para que el cupón no se deforme
   const imgProps = pdf.getImageProperties(imgData);
   const pdfWidth = pdf.internal.pageSize.getWidth();
   const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
+  // Añadimos la imagen con un pequeño margen superior
   pdf.addImage(imgData, 'PNG', 0, 10, pdfWidth, pdfHeight);
   pdf.save(`${filename}.pdf`);
 };
