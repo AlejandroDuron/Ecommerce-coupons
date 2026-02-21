@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
-import styles from './Auth.module.css'
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true)
@@ -24,26 +23,21 @@ export default function Auth() {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    
-    if (isLogin) {
-      const { error } = await login(formData.email, formData.password)
-      if (!error) navigate('/')
-    } else {
-      // Llamamos a la función register con todos los parámetros requeridos
-      const { error } = await register(
-        formData.email, 
-        formData.password, 
-        formData.nombres, 
-        formData.apellidos, 
-        formData.telefono, 
-        formData.dui, 
-        formData.direccion
-      )
-      if (!error) {
-        alert('Registro exitoso. Revisa tu correo para confirmar la cuenta.')
-        setIsLogin(true)
-      }
+  e.preventDefault();
+
+  if (!isLogin) {
+    // Validación de DUI (Formato: 00000000-0)
+    const duiRegex = /^\d{8}-\d{1}$/;
+    if (!duiRegex.test(formData.dui)) {
+      alert("El DUI debe tener el formato 00000000-0");
+      return;
+    }
+
+    // Validación de Teléfono (8 dígitos)
+    const telRegex = /^\d{8,11}$/; // Ajusta según prefieras (mínimo 8)
+    if (!telRegex.test(formData.telefono)) {
+      alert("El teléfono no es válido");
+      return;
     }
   }
 
@@ -86,4 +80,5 @@ export default function Auth() {
       </div>
     </div>
   )
+}
 }
