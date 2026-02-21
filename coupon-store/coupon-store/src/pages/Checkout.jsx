@@ -1,13 +1,14 @@
-// pages/Checkout.jsx
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import useAppStore from '../store/useAppStore'
 import { formatPrice } from '../utils/formatters'
-import { generateCouponCode } from '../utils/couponHelpers'
 import styles from './Checkout.module.css'
 import { supabase } from '../utils/supabaseClient'
+import emailjs from '@emailjs/browser'
+
+// ─── COMPONENTES AUXILIARES ──────────────────────────────────────────
 
 // Resumen del carrito
 function StepCart({ items, total, savings, onNext }) {
@@ -25,12 +26,12 @@ function StepCart({ items, total, savings, onNext }) {
             {items.map(({ offer }) => (
               <div key={offer.id} className={styles.item}>
                 <div className={styles.itemInfo}>
-                  <span className={styles.itemCompany}>{offer.company}</span>
-                  <span className={styles.itemTitle}>{offer.title}</span>
+                  <span className={styles.itemCompany}>{offer.empresas?.nombre_empresa || 'Empresa'}</span>
+                  <span className={styles.itemTitle}>{offer.titulo}</span>
                 </div>
                 <div className={styles.itemPrices}>
-                  <span className={styles.itemFinal}>{formatPrice(offer.final_price)}</span>
-                  <span className={styles.itemOrig}>{formatPrice(offer.original_price)}</span>
+                  <span className={styles.itemFinal}>{formatPrice(offer.precio_oferta)}</span>
+                  <span className={styles.itemOrig}>{formatPrice(offer.precio_regular)}</span>
                 </div>
               </div>
             ))}
@@ -49,19 +50,13 @@ function StepCart({ items, total, savings, onNext }) {
   )
 }
 
-// Pago
+// Formulario de Pago
 function StepPayment({ total, onPay, loading }) {
   const [method, setMethod] = useState('card')
   const [form, setForm] = useState({ name: '', number: '', expiry: '', cvv: '' })
   const [error, setError] = useState('')
 
   const update = (f) => (e) => setForm(p => ({ ...p, [f]: e.target.value }))
-
-  const METHODS = [
-    { id: 'card',   icon: '💳', label: 'Tarjeta' },
-    { id: 'wallet', icon: '📱', label: 'Wallet Digital' },
-    { id: 'crypto', icon: '₿',  label: 'Crypto' },
-  ]
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -76,75 +71,45 @@ function StepPayment({ total, onPay, loading }) {
   return (
     <form className={styles.step} onSubmit={handleSubmit}>
       <h2 className={styles.stepTitle}>💳 Método de Pago</h2>
-
-      <div className={styles.methodGrid}>
-        {METHODS.map(m => (
-          <button
-            key={m.id}
-            type="button"
-            className={`${styles.methodBtn} ${method === m.id ? styles.methodActive : ''}`}
-            onClick={() => setMethod(m.id)}
-          >
-            <span>{m.icon}</span>
-            <span>{m.label}</span>
-          </button>
-        ))}
+      <div className={styles.cardForm}>
+        <div className="input-group">
+          <label>Nombre en la tarjeta</label>
+          <input type="text" className="input-field" placeholder="JUAN PÉREZ" value={form.name} onChange={update('name')} />
+        </div>
+        <div className="input-group">
+          <label>Número de tarjeta</label>
+          <input type="text" className="input-field" placeholder="0000 0000 0000 0000" maxLength={19} value={form.number} onChange={update('number')} />
+        </div>
+        <div className={styles.cardRow}>
+          <div className="input-group">
+            <label>Vencimiento</label>
+            <input type="text" className="input-field" placeholder="MM/AA" maxLength={5} value={form.expiry} onChange={update('expiry')} />
+          </div>
+          <div className="input-group">
+            <label>CVV</label>
+            <input type="text" className="input-field" placeholder="000" maxLength={4} value={form.cvv} onChange={update('cvv')} />
+          </div>
+        </div>
       </div>
-
-      {method === 'card' && (
-        <div className={styles.cardForm}>
-          <div className="input-group">
-            <label>Nombre en la tarjeta</label>
-            <input type="text" className="input-field" placeholder="JUAN PÉREZ" value={form.name} onChange={update('name')} />
-          </div>
-          <div className="input-group">
-            <label>Número de tarjeta</label>
-            <input type="text" className="input-field" placeholder="0000 0000 0000 0000" maxLength={19} value={form.number} onChange={update('number')} />
-          </div>
-          <div className={styles.cardRow}>
-            <div className="input-group">
-              <label>Vencimiento</label>
-              <input type="text" className="input-field" placeholder="MM/AA" maxLength={5} value={form.expiry} onChange={update('expiry')} />
-            </div>
-            <div className="input-group">
-              <label>CVV</label>
-              <input type="text" className="input-field" placeholder="000" maxLength={4} value={form.cvv} onChange={update('cvv')} />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {method !== 'card' && (
-        <div className={styles.altMethod}>
-          <p>Serás redirigido al proveedor al confirmar.</p>
-        </div>
-      )}
-
       {error && <div className={styles.errorMsg}>⚠ {error}</div>}
-
       <div className={styles.totalRow}>
         <span>Total a pagar</span>
         <span className={styles.totalAmt}>{formatPrice(total)}</span>
       </div>
-
       <button type="submit" className={`btn btn-primary ${styles.nextBtn}`} disabled={loading}>
         {loading ? 'Procesando...' : 'Confirmar y Pagar →'}
       </button>
-      <p className={styles.secure}>🔒 Pago Encriptado SSL</p>
     </form>
   )
 }
 
-// Confirmación
+// Pantalla de Éxito
 function StepConfirm({ codes, txId }) {
   return (
     <div className={`${styles.step} ${styles.confirm}`}>
       <div className={styles.checkIcon}>✓</div>
       <h2 className={styles.confirmTitle}>¡Pago Exitoso!</h2>
-      <p className={styles.confirmText}>
-        Tu transacción fue procesada correctamente. Ya podés usar tus cupones.
-      </p>
-
+      <p className={styles.confirmText}>Tu transacción fue procesada. Se ha enviado un correo de confirmación.</p>
       <div className={styles.codesWrap}>
         {codes.map((code, i) => (
           <div key={i} className={styles.codeBox}>
@@ -153,24 +118,17 @@ function StepConfirm({ codes, txId }) {
           </div>
         ))}
       </div>
-
       <p className={styles.txId}>ID de Transacción: #{txId}</p>
-
-      <Link to="/mis-cupones" className={`btn btn-primary ${styles.nextBtn}`}>
-        Ver Mis Cupones →
-      </Link>
-      <Link to="/" className={`btn btn-outline ${styles.nextBtn}`} style={{ marginTop: '0.5rem' }}>
-        Volver al Inicio
-      </Link>
+      <Link to="/mis-cupones" className={`btn btn-primary ${styles.nextBtn}`}>Ver Mis Cupones →</Link>
     </div>
   )
 }
 
-// Página principal 
+// ─── COMPONENTE PRINCIPAL ────────────────────────────────────────────
+
 export default function Checkout() {
   const { items, total, savings, clearCart } = useCart()
   const { user } = useAuth()
-  const { addUserCoupon } = useAppStore()
   const [step, setStep] = useState(1)
   const [paying, setPaying] = useState(false)
   const [generatedCodes, setGeneratedCodes] = useState([])
@@ -178,43 +136,39 @@ export default function Checkout() {
 
   const handlePay = async () => {
     setPaying(true)
-
     try {
-      //Creamos el registro principal de la Orden
+      //Guardamos la Orden en Supabase
       const { data: orden, error: ordenError } = await supabase
         .from('ordenes')
-        .insert([{
-          id_cliente: user.id,
-          total_pagado: total
-        }])
-        .select()
-        .single()
+        .insert([{ id_cliente: user.id, total_pagado: total }])
+        .select().single()
 
       if (ordenError) throw ordenError
 
       const codes = []
 
-      // Iteraramos sobre los productos del carrito para crear los Detalles y Cupones
+      //Procesamos cada producto del carrito
       for (const item of items) {
         const { offer, quantity } = item
 
-        // Creamos el detalle de la orden
+        //Guardamos Detalle de la Orden
         const { data: detalle, error: detalleError } = await supabase
           .from('detalle_orden')
           .insert([{
             id_orden: orden.id,
             id_oferta: offer.id,
             cantidad: quantity,
-            precio_unitario: offer.final_price
+            precio_unitario: offer.precio_oferta
           }])
-          .select()
-          .single()
+          .select().single()
 
         if (detalleError) throw detalleError
 
-        // Generamos y guardamos los cupones reales 1 x unidad
+        //Generamos Cupones lo de los 7 digitos ya está
         for (let i = 0; i < quantity; i++) {
-          const codigoUnico = generateCouponCode(offer.id) // Usamos el helper
+          const empresaCodigo = offer.empresas?.codigo_empresa || 'GEN'
+          const numAleatorio = Math.floor(1000000 + Math.random() * 9000000)
+          const codigoUnico = `${empresaCodigo}${numAleatorio}`
 
           const { error: cuponError } = await supabase
             .from('cupones')
@@ -231,14 +185,28 @@ export default function Checkout() {
         }
       }
 
-      // Si todo salió bien, mostramos los códigos, limpiamos carrito y pasamos al final
+      const templateParams = {
+        to_name: user.user_metadata?.nombres || 'Cliente',
+        to_email: user.email,
+        order_id: txId,
+        total_paid: formatPrice(total),
+        coupon_codes: codes.join(', ')
+      }
+
+      await emailjs.send(
+        'service_f15ltiy',
+        'template_hxue9ws',
+        templateParams,
+        'ftp4H_okMNH98WJgn'
+      )
+      //Mostramos códigos, limpiamos carrito
       setGeneratedCodes(codes)
       clearCart()
       setStep(3)
 
     } catch (error) {
-      console.error('Error en el checkout:', error)
-      alert('Hubo un error procesando tu compra: ' + error.message)
+      console.error('Error en checkout:', error)
+      alert('Hubo un error: ' + error.message)
     } finally {
       setPaying(false)
     }
@@ -247,7 +215,6 @@ export default function Checkout() {
   return (
     <main className={styles.main}>
       <div className={`container ${styles.inner}`}>
-        {/* Steps indicator */}
         <div className={styles.stepsBar}>
           {[['1', 'Carrito'], ['2', 'Pago'], ['3', 'Confirmación']].map(([n, label]) => (
             <div key={n} className={`${styles.stepIndicator} ${step >= parseInt(n) ? styles.stepDone : ''} ${step === parseInt(n) ? styles.stepCurrent : ''}`}>
