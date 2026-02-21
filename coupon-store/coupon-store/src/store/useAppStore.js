@@ -169,7 +169,7 @@ const useAppStore = create((set, get) => ({
 
   getFeaturedOffers: () => get().offers.filter(o => o.featured),
 
-  getOfferById: (id) => get().offers.find(o => o.id === parseInt(id)),
+  getOfferById: (id) => get().offers.find(o => String(o.id) === String(id)),
 }))
 
 export default useAppStore
