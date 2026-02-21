@@ -72,7 +72,7 @@ const useAppStore = create((set, get) => ({
         image_url: oferta.image_url || 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80', 
         description: oferta.descripcion,
         expires_at: oferta.fecha_fin,
-        featured: false,
+        featured: true, // Podríamos agregar un campo en la BD para esto, por ahora lo dejamos así
       }));
 
       // set({ offers: formattedOffers, loading: false });
