@@ -1,5 +1,5 @@
 // components/offers/OfferCard.jsx
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom' // <-- Agregamos useNavigate
 import { useCart } from '../../context/CartContext'
 import { formatPrice, expiryLabel, daysUntil } from '../../utils/formatters'
 import { Clock, Calendar, Star, ShoppingCart, ArrowRight, Check } from 'lucide-react'
@@ -7,12 +7,22 @@ import styles from './OfferCard.module.css'
 
 export default function OfferCard({ offer }) {
   const { addToCart, items } = useCart()
+  const navigate = useNavigate() // <-- Inicializamos navegación
   const inCart = items.some(i => i.offer.id === offer.id)
 
   const days = daysUntil(offer.expires_at)
   const urgent = days !== null && days <= 3
 
   const initials = offer.company?.slice(0, 2).toUpperCase() || '??'
+
+  // <-- Nueva función que guarda y redirige
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    if (!inCart) {
+      addToCart(offer);
+    }
+    navigate('/checkout');
+  };
 
   return (
     <div className={`card ${styles.card}`}>
@@ -55,10 +65,10 @@ export default function OfferCard({ offer }) {
           </Link>
           <button
             className={`btn btn-primary ${styles.buyBtn}`}
-            onClick={() => addToCart(offer)}
-            disabled={inCart}
+            onClick={handleAddToCart} // <-- Usamos la nueva función
+            // Eliminamos el disabled={inCart} para permitir ir al checkout
           >
-            {inCart ? <><Check size={13} /> En carrito</> : <><ShoppingCart size={13} /> Comprar</>}
+            {inCart ? <><Check size={13} /> Ir a pagar</> : <><ShoppingCart size={13} /> Comprar</>}
           </button>
         </div>
       </div>
