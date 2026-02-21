@@ -14,13 +14,6 @@ const MOCK_OFFERS = [
   { id: 8, title: 'Sesión Spa de Lujo con Masaje Volcánico', company: 'Wellness Center', category: 'Bienestar', discount_pct: 40, original_price: 75, final_price: 45, image_url: null, description: 'Masaje con piedras volcánicas y aromaterapia incluida.', conditions: ['Solo turnos tarde', 'Reserva obligatoria'], expires_at: new Date(Date.now() + 15 * 86400000).toISOString(), featured: false, rating: 4.9 },
 ]
 
-const MOCK_USER_COUPONS = [
-  { id: 'c1', offer_id: 6, code: 'COFFEE24', status: 'active', company: 'SushiKo Premium', title: 'Menú Degustación', category: 'Gastronomía', expires_at: new Date(Date.now() + 2 * 3600000).toISOString(), purchased_at: new Date().toISOString() },
-  { id: 'c2', offer_id: 7, code: 'NIKE30OFF', status: 'active', company: 'Sport Pro', title: 'Zapatillas Next-Gen', category: 'Moda', expires_at: new Date(Date.now() + 4 * 86400000).toISOString(), purchased_at: new Date().toISOString() },
-  { id: 'c3', offer_id: 1, code: 'SUSHI50AB', status: 'used', company: 'Sushi Master', title: 'Combo Omakase', category: 'Gastronomía', expires_at: new Date(Date.now() - 5 * 86400000).toISOString(), purchased_at: new Date().toISOString() },
-  { id: 'c4', offer_id: 2, code: 'SPA30CD', status: 'expired', company: 'Cyber Spa', title: 'Sesión LED', category: 'Bienestar', expires_at: new Date(Date.now() - 10 * 86400000).toISOString(), purchased_at: new Date().toISOString() },
-]
-
 const CATEGORIES = ['Gastronomía', 'Bienestar', 'Tecnología', 'Viajes', 'Moda']
 
 // Store 
