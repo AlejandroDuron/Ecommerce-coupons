@@ -7,6 +7,7 @@ import useAppStore from '../store/useAppStore'
 import { formatPrice } from '../utils/formatters'
 import { generateCouponCode } from '../utils/couponHelpers'
 import styles from './Checkout.module.css'
+import { supabase } from '../utils/supabaseClient'
 
 // Resumen del carrito
 function StepCart({ items, total, savings, onNext }) {
@@ -177,30 +178,70 @@ export default function Checkout() {
 
   const handlePay = async () => {
     setPaying(true)
-    // Simular delay de pago
-    await new Promise(r => setTimeout(r, 1800))
 
-    // Generar cupones y agregarlos al store
-    const codes = items.map(({ offer }) => {
-      const code = generateCouponCode(offer.id)
-      addUserCoupon({
-        id: `c-${Date.now()}-${offer.id}`,
-        offer_id: offer.id,
-        code,
-        status: 'active',
-        company: offer.company,
-        title: offer.title,
-        category: offer.category,
-        expires_at: offer.expires_at,
-        purchased_at: new Date().toISOString(),
-      })
-      return code
-    })
+    try {
+      //Creamos el registro principal de la Orden
+      const { data: orden, error: ordenError } = await supabase
+        .from('ordenes')
+        .insert([{
+          id_cliente: user.id,
+          total_pagado: total
+        }])
+        .select()
+        .single()
 
-    setGeneratedCodes(codes)
-    clearCart()
-    setPaying(false)
-    setStep(3)
+      if (ordenError) throw ordenError
+
+      const codes = []
+
+      // Iteraramos sobre los productos del carrito para crear los Detalles y Cupones
+      for (const item of items) {
+        const { offer, quantity } = item
+
+        // Creamos el detalle de la orden
+        const { data: detalle, error: detalleError } = await supabase
+          .from('detalle_orden')
+          .insert([{
+            id_orden: orden.id,
+            id_oferta: offer.id,
+            cantidad: quantity,
+            precio_unitario: offer.final_price
+          }])
+          .select()
+          .single()
+
+        if (detalleError) throw detalleError
+
+        // Generamos y guardamos los cupones reales 1 x unidad
+        for (let i = 0; i < quantity; i++) {
+          const codigoUnico = generateCouponCode(offer.id) // Usamos el helper
+
+          const { error: cuponError } = await supabase
+            .from('cupones')
+            .insert([{
+              codigo_unico: codigoUnico,
+              id_oferta: offer.id,
+              id_cliente: user.id,
+              estado_cupon: 'Disponible',
+              id_detalle_orden: detalle.id
+            }])
+
+          if (cuponError) throw cuponError
+          codes.push(codigoUnico)
+        }
+      }
+
+      // Si todo salió bien, mostramos los códigos, limpiamos carrito y pasamos al final
+      setGeneratedCodes(codes)
+      clearCart()
+      setStep(3)
+
+    } catch (error) {
+      console.error('Error en el checkout:', error)
+      alert('Hubo un error procesando tu compra: ' + error.message)
+    } finally {
+      setPaying(false)
+    }
   }
 
   return (
