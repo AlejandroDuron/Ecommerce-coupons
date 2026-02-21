@@ -49,17 +49,26 @@ export function AuthProvider({ children }) {
     return { data, error }
   }
 
-  const register = async (email, password, fullName) => {
-    dispatch({ type: 'SET_LOADING', payload: true })
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { full_name: fullName } },
-    })
-    if (error) dispatch({ type: 'SET_ERROR', payload: error.message })
-    else dispatch({ type: 'SET_USER', payload: data.user })
-    return { data, error }
-  }
+  const register = async (email, password, nombres, apellidos, telefono, dui, direccion) => {
+  dispatch({ type: 'SET_LOADING', payload: true })
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { 
+      data: { 
+        nombres,    
+        apellidos,  
+        telefono,   
+        dui,        
+        direccion,  
+        full_name: `${nombres} ${apellidos}`.trim() 
+      } 
+    },
+  })
+  if (error) dispatch({ type: 'SET_ERROR', payload: error.message })
+  else dispatch({ type: 'SET_USER', payload: data.user })
+  return { data, error }
+}
 
   const logout = async () => {
     await supabase.auth.signOut()
