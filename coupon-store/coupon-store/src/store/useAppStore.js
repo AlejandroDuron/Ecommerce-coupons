@@ -39,26 +39,55 @@ const useAppStore = create((set, get) => ({
     sortBy:      'featured',  // 'featured' | 'discount' | 'price_asc' | 'newest'
   },
 
-  //  Fetch Ofertas (Supabase o Mock) 
+  //  Fetch Ofertas 
   fetchOffers: async () => {
-    set({ loading: true, error: null })
+    set({ loading: true, error: null });
     try {
+      // Hacemos la consulta a la tabla 'ofertas' y traemos la información de la empresa y el rubro
       const { data, error } = await supabase
-        .from('offers')
-        .select('*')
-        .eq('approved', true)
-        .gte('expires_at', new Date().toISOString())
+        .from('ofertas')
+        .select(`
+          id,
+          titulo,
+          descripcion,
+          precio_regular,
+          precio_oferta,
+          fecha_fin,
+          cantidad_limite,
+          image_url,
+          empresas (
+            nombre_empresa,
+            rubros (
+              nombre_rubro
+            )
+          )
+        `)
+        .eq('estado', 'Aprobada'); // Solo mostramos las ofertas aprobadas
 
-      // Si Supabase no está configurado (para mientras eh) usar mock
-      if (error || !data?.length) {
-        set({ offers: MOCK_OFFERS, loading: false })
-      } else {
-        set({ offers: data, loading: false })
-      }
-    } catch {
-      set({ offers: MOCK_OFFERS, loading: false })
+      if (error) throw error;
+
+      // Mapeamos los datos para que el Frontend los entienda con la misma estructura
+      // pero usando los datos reales de la BD
+      const formattedOffers = data.map(oferta => ({
+        id: oferta.id,
+        title: oferta.titulo,
+        company: oferta.empresas?.nombre_empresa || 'Empresa Desconocida',
+        category: oferta.empresas?.rubros?.nombre_rubro || 'General',
+        discount_pct: Math.round((1 - (oferta.precio_oferta / oferta.precio_regular)) * 100),
+        original_price: oferta.precio_regular,
+        final_price: oferta.precio_oferta,
+        image_url: oferta.image_url || 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80', 
+        description: oferta.descripcion,
+        expires_at: oferta.fecha_fin,
+        featured: false,
+      }));
+
+      set({ offers: formattedOffers, loading: false });
+    } catch (error) {
+      console.error('Error fetching offers:', error);
+      set({ error: error.message, loading: false });
     }
-  },
+},
 
   // ── Fetch Cupones del usuario ──────────────────────────
   fetchUserCoupons: async (userId) => {
