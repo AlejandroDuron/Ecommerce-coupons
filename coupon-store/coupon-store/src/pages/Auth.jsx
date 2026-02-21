@@ -75,14 +75,15 @@ export default function Auth() {
   const handleRegister = async (e) => {
     e.preventDefault()
     
-    // Validación básica de campos vacíos
-    const camposVacios = !form.nombres || !form.apellidos || !form.dui || !form.telefono || !form.direccion || !form.email || !form.password;
-    if (camposVacios) return setLocalError('Por favor, completá todos los campos obligatorios.')
+    // Validamos campos obligatorios
+    if (!form.email || !form.password || !form.nombres || !form.dui) {
+      return setLocalError('Completá los campos obligatorios.')
+    }
     
     if (form.password !== form.confirm) return setLocalError('Las contraseñas no coinciden.')
-    if (form.password.length < 6) return setLocalError('La contraseña debe tener al menos 6 caracteres.')
+    if (form.password.length < 6) return setLocalError('Mínimo 6 caracteres.')
 
-    // Enviamos los datos en el orden exacto que espera  el authcontext
+    // Enviamos los 7 parámetros en el orden correcto
     const { error: err } = await register(
       form.email, 
       form.password, 
@@ -92,11 +93,10 @@ export default function Auth() {
       form.dui, 
       form.direccion
     )
-    
+
     if (err) setLocalError(err.message)
     else setSuccessMsg('¡Cuenta creada! Revisá tu correo para confirmar.')
   }
-
   const handleForgot = async (e) => {
     e.preventDefault()
     if (!form.email) return setLocalError('Ingresá tu correo.')
