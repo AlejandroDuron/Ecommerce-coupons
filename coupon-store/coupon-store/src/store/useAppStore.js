@@ -2,20 +2,6 @@
 import { create } from 'zustand'
 import { supabase } from '../utils/supabaseClient'
 
-//Datos mock para desarrollo UI
-const MOCK_OFFERS = [
-  { id: 1, title: 'Combo Premium Omakase para dos', company: 'Sushi Master Gourmet', category: 'Gastronomía', discount_pct: 50, original_price: 30, final_price: 15, image_url: null, description: 'Sumérgete en una experiencia sensorial inigualable. Nuestro chef ha diseñado una selección de 30 piezas...', conditions: ['Válido de lunes a jueves', 'Reserva previa 24hs', 'Presentar cupón al llegar'], expires_at: new Date(Date.now() + 2 * 86400000).toISOString(), featured: true, rating: 4.8 },
-  { id: 2, title: 'Regeneración celular con tecnología LED', company: 'Cyber Spa', category: 'Bienestar', discount_pct: 30, original_price: 120, final_price: 84, image_url: null, description: 'Sesión completa de fototerapia LED para rejuvenecimiento celular.', conditions: ['Válido L-V', 'Con turno previo'], expires_at: new Date(Date.now() + 10 * 86400000).toISOString(), featured: true, rating: 4.9 },
-  { id: 3, title: 'Auriculares Wireless Noise Cancelling Pro', company: 'Neo Audio', category: 'Tecnología', discount_pct: 15, original_price: 250, final_price: 212.5, image_url: null, description: 'Cancelación de ruido cuántica para máxima inmersión.', conditions: ['Stock limitado', 'No acumulable'], expires_at: new Date(Date.now() + 31 * 86400000).toISOString(), featured: true, rating: 4.5 },
-  { id: 4, title: 'Potencia extrema para desarrollo', company: 'Void Computing', category: 'Tecnología', discount_pct: 20, original_price: 500, final_price: 400, image_url: null, description: 'Workstation de alto rendimiento para desarrolladores.', conditions: ['Solo online', 'Envío incluido'], expires_at: new Date(Date.now() + 7 * 86400000).toISOString(), featured: true, rating: 5.0 },
-  { id: 5, title: 'Inmersión total en mundos paralelos', company: 'VR Center', category: 'Tecnología', discount_pct: 40, original_price: 80, final_price: 48, image_url: null, description: 'Sesión de realidad virtual de 2 horas con equipos de última generación.', conditions: ['Mayores de 14', 'Con turno'], expires_at: new Date(Date.now() + 14 * 86400000).toISOString(), featured: true, rating: 4.7 },
-  { id: 6, title: 'Menú Degustación Signature para Dos', company: 'SushiKo Premium', category: 'Gastronomía', discount_pct: 40, original_price: 85, final_price: 49.99, image_url: null, description: 'Barra de sushi premium con ingredientes importados.', conditions: ['Solo fines de semana', 'Sin consumo mínimo'], expires_at: new Date(Date.now() + 3 * 86400000).toISOString(), featured: false, rating: 4.8 },
-  { id: 7, title: 'Zapatillas de Alto Rendimiento Next-Gen', company: 'Sport Pro', category: 'Moda', discount_pct: 50, original_price: 120, final_price: 60, image_url: null, description: 'Tecnología de amortiguación avanzada para corredores.', conditions: ['Última unidad', 'Sin devolución'], expires_at: new Date(Date.now() + 1 * 86400000).toISOString(), featured: false, rating: 4.6 },
-  { id: 8, title: 'Sesión Spa de Lujo con Masaje Volcánico', company: 'Wellness Center', category: 'Bienestar', discount_pct: 40, original_price: 75, final_price: 45, image_url: null, description: 'Masaje con piedras volcánicas y aromaterapia incluida.', conditions: ['Solo turnos tarde', 'Reserva obligatoria'], expires_at: new Date(Date.now() + 15 * 86400000).toISOString(), featured: false, rating: 4.9 },
-]
-
-const CATEGORIES = ['Gastronomía', 'Bienestar', 'Tecnología', 'Viajes', 'Moda']
-
 // Store 
 const useAppStore = create((set, get) => ({
   // State 
