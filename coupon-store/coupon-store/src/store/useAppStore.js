@@ -21,7 +21,7 @@ const useAppStore = create((set, get) => ({
   // State 
   offers:       [],
   userCoupons:  [],
-  categories:   CATEGORIES,
+  categories:   [],
   loading:      false,
   error:        null,
 
