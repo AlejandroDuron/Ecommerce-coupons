@@ -1,24 +1,27 @@
-// components/home/CategoryGrid.jsx
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useAppStore from '../../store/useAppStore'
-import { Utensils, Leaf, Laptop, Plane, ShoppingBag, ArrowRight } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import styles from './CategoryGrid.module.css'
-
-const CATEGORY_DATA = [
-  { name: 'Gastronomía', icon: <Utensils size={26} />, color: '#f59e0b' },
-  { name: 'Bienestar',   icon: <Leaf size={26} />,     color: '#10b981' },
-  { name: 'Tecnología',  icon: <Laptop size={26} />,   color: '#3b82f6' },
-  { name: 'Viajes',      icon: <Plane size={26} />,    color: '#8b5cf6' },
-  { name: 'Moda',        icon: <ShoppingBag size={26} />, color: '#ec4899' },
-]
+import Loader from '../ui/Loader'
+import { useFetchCategories } from '../../store/useCategoriesStore'
 
 export default function CategoryGrid() {
   const { setFilter } = useAppStore()
   const navigate = useNavigate()
+  const { categories, loading, error } = useFetchCategories()
 
   const handleSelect = (cat) => {
     setFilter('category', cat)
     navigate('/ofertas')
+  }
+
+  if (loading) {
+    return <Loader/>
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>  
   }
 
   return (
@@ -35,15 +38,13 @@ export default function CategoryGrid() {
         </div>
 
         <div className={styles.grid}>
-          {CATEGORY_DATA.map(cat => (
+          {categories.map((cat, index) => (
             <button
-              key={cat.name}
-              className={styles.card}
-              onClick={() => handleSelect(cat.name)}
-              style={{ '--cat-color': cat.color }}
+              key={index} 
+              className={`${styles.card}`}
+              onClick={() => handleSelect(cat.nombre_rubro)}
             >
-              <span className={styles.icon}>{cat.icon}</span>
-              <span className={styles.name}>{cat.name}</span>
+              <span className={styles.name}>{cat.nombre_rubro}</span>
               <ArrowRight size={13} className={styles.arrow} />
             </button>
           ))}

@@ -156,7 +156,7 @@ const useAppStore = create((set, get) => ({
     return result
   },
 
-  getFeaturedOffers: () => get().offers.filter(o => o.featured),
+  getFeaturedOffers: () => get().offers.filter(o => o.featured).slice(0,3),
 
   getOfferById: (id) => get().offers.find(o => String(o.id) === String(id)),
 }))
