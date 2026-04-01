@@ -5,36 +5,36 @@ import { supabase } from '../utils/supabaseClient'
 // Store 
 const useAppStore = create((set, get) => ({
   // State 
-  offers:       [],
-  userCoupons:  [],
-  categories:   [],
-  loading:      false,
-  error:        null,
+  offers: [],
+  userCoupons: [],
+  categories: [],
+  loading: false,
+  error: null,
 
   filters: {
-    search:      '',
-    category:    '',
+    search: '',
+    category: '',
     minDiscount: 0,
-    sortBy:      'featured',  // 'featured' | 'discount' | 'price_asc' | 'newest'
+    sortBy: 'featured',  // 'featured' | 'discount' | 'price_asc' | 'newest'
   },
 
   // Fetch Categories 
-fetchCategories: async () => {
-  set({ loading: true, error: null })
+  fetchCategories: async () => {
+    set({ loading: true, error: null })
 
-  try {
-    const { data, error } = await supabase
-      .from('rubros')
-      .select('nombre_rubro')
-      .limit(5)
+    try {
+      const { data, error } = await supabase
+        .from('rubros')
+        .select('nombre_rubro')
+        .limit(5)
 
-    if (error) throw error
+      if (error) throw error
 
-    set({ headerCategories: data, loading: false })
-  } catch (err) {
-    set({ error: err.message, loading: false })
-  }
-},
+      set({ headerCategories: data, loading: false })
+    } catch (err) {
+      set({ error: err.message, loading: false })
+    }
+  },
 
   //  Fetch Ofertas 
   fetchOffers: async () => {
@@ -73,7 +73,7 @@ fetchCategories: async () => {
         discount_pct: Math.round((1 - (oferta.precio_oferta / oferta.precio_regular)) * 100),
         original_price: oferta.precio_regular,
         final_price: oferta.precio_oferta,
-        image_url: oferta.image_url || 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80', 
+        image_url: oferta.image_url || 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80',
         description: oferta.descripcion,
         expires_at: oferta.fecha_fin,
         featured: true, // Podríamos agregar un campo en la BD para esto, por ahora lo dejamos así
@@ -87,7 +87,7 @@ fetchCategories: async () => {
       console.error('Error fetching offers:', error);
       set({ error: error.message, loading: false });
     }
-},
+  },
 
   //Fetch Cupones del usuario
   fetchUserCoupons: async (userId) => {
@@ -118,8 +118,8 @@ fetchCategories: async () => {
       const formattedCoupons = data.map(cupon => ({
         id: cupon.codigo_unico, // Usamos el código único como ID principal
         code: cupon.codigo_unico,
-        status: cupon.estado_cupon === 'Disponible' ? 'active' : 
-                cupon.estado_cupon === 'Canjeado' ? 'used' : 'expired',
+        status: cupon.estado_cupon === 'Disponible' ? 'active' :
+          cupon.estado_cupon === 'Canjeado' ? 'used' : 'expired',
         title: cupon.ofertas?.titulo || 'Oferta Desconocida',
         company: cupon.ofertas?.empresas?.nombre_empresa || 'Empresa Desconocida',
         category: cupon.ofertas?.empresas?.rubros?.nombre_rubro || 'General',
@@ -129,7 +129,7 @@ fetchCategories: async () => {
       }));
 
       set({ userCoupons: formattedCoupons, loading: false })
-      
+
     } catch (error) {
       console.error('Error fetching user coupons:', error);
       // Si falla, ya NO mostramos los mocks, mostramos vacío o el error real
@@ -166,15 +166,15 @@ fetchCategories: async () => {
       result = result.filter(o => o.discount_pct >= filters.minDiscount)
     }
     switch (filters.sortBy) {
-      case 'discount':  result.sort((a, b) => b.discount_pct - a.discount_pct); break
+      case 'discount': result.sort((a, b) => b.discount_pct - a.discount_pct); break
       case 'price_asc': result.sort((a, b) => a.final_price - b.final_price); break
-      case 'newest':    result.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)); break
-      default:          result.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0)); break
+      case 'newest': result.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)); break
+      default: result.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0)); break
     }
     return result
   },
 
-  getFeaturedOffers: () => get().offers.filter(o => o.featured).slice(0,3),
+  getFeaturedOffers: () => get().offers.filter(o => o.featured).slice(0, 3),
 
   getOfferById: (id) => get().offers.find(o => String(o.id) === String(id)),
 }))
