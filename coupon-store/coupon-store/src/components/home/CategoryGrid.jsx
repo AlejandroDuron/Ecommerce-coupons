@@ -4,12 +4,14 @@ import useAppStore from '../../store/useAppStore'
 import { ArrowRight } from 'lucide-react'
 import styles from './CategoryGrid.module.css'
 import Loader from '../ui/Loader'
-import { useFetchCategories } from '../../store/useCategoriesStore'
 
 export default function CategoryGrid() {
-  const { setFilter } = useAppStore()
+  const { setFilter, fetchCategories, loading, error, headerCategories } = useAppStore()
   const navigate = useNavigate()
-  const { categories, loading, error } = useFetchCategories()
+
+  useEffect(() => {
+    fetchCategories()
+  }, [])
 
   const handleSelect = (cat) => {
     setFilter('category', cat)
@@ -38,7 +40,7 @@ export default function CategoryGrid() {
         </div>
 
         <div className={styles.grid}>
-          {categories.map((cat, index) => (
+          {headerCategories?.map((cat, index) => (
             <button
               key={index} 
               className={`${styles.card}`}

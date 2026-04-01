@@ -18,6 +18,24 @@ const useAppStore = create((set, get) => ({
     sortBy:      'featured',  // 'featured' | 'discount' | 'price_asc' | 'newest'
   },
 
+  // Fetch Categories 
+fetchCategories: async () => {
+  set({ loading: true, error: null })
+
+  try {
+    const { data, error } = await supabase
+      .from('rubros')
+      .select('nombre_rubro')
+      .limit(5)
+
+    if (error) throw error
+
+    set({ headerCategories: data, loading: false })
+  } catch (err) {
+    set({ error: err.message, loading: false })
+  }
+},
+
   //  Fetch Ofertas 
   fetchOffers: async () => {
     set({ loading: true, error: null });
