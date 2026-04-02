@@ -47,8 +47,9 @@
 .finalPrice { font-size: 1.2rem; font-weight: 800; color: var(--green); font-family: var(--font-mono); }
 .originalPrice { font-size: 0.8rem; color: var(--muted); text-decoration: line-through; }
 
-.expiry { font-size: 0.75rem; color: var(--muted); display: flex; align-items: center; gap: 0.3rem; }
+.expiry { font-size: 0.75rem; color: var(--white); display: flex; align-items: center; gap: 0.3rem; }
 .urgent { color: #f59e0b; }
+.low { color: #f24838; font-weight: 700;}
 
 .actions { display: flex; gap: 0.5rem; margin-top: auto; padding-top: 0.5rem; }
 .detailBtn { flex: 1; font-size: 0.7rem; padding: 0.5rem 0.75rem; justify-content: center; }
