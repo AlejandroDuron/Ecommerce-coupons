@@ -145,7 +145,7 @@ const useAppStore = create((set, get) => ({
     set({ filters: { search: '', category: '', minDiscount: 0, sortBy: 'featured' } }),
 
   // ── Ofertas filtradas (computed) ───────────────────────
-  getFilteredOffers: () => {
+  getFilteredOffers: () => { // zustand
     const { offers, filters } = get()
     let result = [...offers]
 
