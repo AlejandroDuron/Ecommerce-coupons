@@ -2,7 +2,7 @@
 import { Link, useNavigate } from 'react-router-dom' // <-- Agregamos useNavigate
 import { useCart } from '../../context/CartContext'
 import { formatPrice, expiryLabel, daysUntil } from '../../utils/formatters'
-import { Clock, Calendar, Star, ShoppingCart, ArrowRight, Check } from 'lucide-react'
+import { Clock, Calendar, Star, ShoppingCart, ArrowRight, Check, Ticket, ArrowBigDownDash } from 'lucide-react'
 import styles from './OfferCard.module.css'
 
 export default function OfferCard({ offer }) {
@@ -12,6 +12,7 @@ export default function OfferCard({ offer }) {
 
   const days = daysUntil(offer.expires_at)
   const urgent = days !== null && days <= 3
+  const cuponsAvilable = offer.available <=4
 
   const initials = offer.company?.slice(0, 2).toUpperCase() || '??'
 
@@ -57,6 +58,11 @@ export default function OfferCard({ offer }) {
         <div className={`${styles.expiry} ${urgent ? styles.urgent : ''}`}>
           {urgent ? <Clock size={12} /> : <Calendar size={12} />}
           {expiryLabel(offer.expires_at)}
+        </div>
+
+        <div className={`${styles.expiry} ${cuponsAvilable ? styles.low : ''}`}>
+          {urgent ? <ArrowBigDownDash size={12} /> : <Ticket size={12} />}
+          <p>Cupones disponibles: {offer.available}</p>
         </div>
 
         <div className={styles.actions}>

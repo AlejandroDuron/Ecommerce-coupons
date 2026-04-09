@@ -2,23 +2,24 @@
 import { useState } from 'react'
 import { getCouponStatus, COUPON_STATUS_LABELS } from '../../utils/couponHelpers'
 import { expiryLabel } from '../../utils/formatters'
-import { Utensils, Leaf, Laptop, Plane, ShoppingBag, Ticket, QrCode } from 'lucide-react'
+import { Utensils, Laptop, Ticket, QrCode, Car, Gamepad, HeartPulse, Rose } from 'lucide-react'
 import CouponModal from './CouponModal'
 import Badge from '../ui/Badge'
 import styles from './CouponCard.module.css'
-
-const CATEGORY_ICONS = {
-  'Gastronomía': <Utensils size={28} />,
-  'Bienestar':   <Leaf size={28} />,
-  'Tecnología':  <Laptop size={28} />,
-  'Viajes':      <Plane size={28} />,
-  'Moda':        <ShoppingBag size={28} />,
-}
 
 export default function CouponCard({ coupon }) {
   const [showModal, setShowModal] = useState(false)
   const status = getCouponStatus(coupon.status, coupon.expires_at)
   const isActive = status === 'active'
+
+  const CATEGORY_ICONS = {
+    'Restaurantes': <Utensils size={28}/>,  
+    'Automotriz':   <Car size={28} />,     
+    'Entretenimiento': <Gamepad size={28} />,     
+    'Salud':        <HeartPulse size={28} />, 
+    'Tecnología':   <Laptop size={28} />, 
+    'Belleza' : <Rose size={28} />, 
+  }
 
   return (
     <>

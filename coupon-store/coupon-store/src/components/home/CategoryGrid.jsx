@@ -1,24 +1,48 @@
-// components/home/CategoryGrid.jsx
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useAppStore from '../../store/useAppStore'
-import { Utensils, Leaf, Laptop, Plane, ShoppingBag, ArrowRight } from 'lucide-react'
+import { ArrowRight, Car, Gamepad, HeartPulse, Laptop, Rose, Utensils, } from 'lucide-react'
 import styles from './CategoryGrid.module.css'
-
-const CATEGORY_DATA = [
-  { name: 'Gastronomía', icon: <Utensils size={26} />, color: '#f59e0b' },
-  { name: 'Bienestar',   icon: <Leaf size={26} />,     color: '#10b981' },
-  { name: 'Tecnología',  icon: <Laptop size={26} />,   color: '#3b82f6' },
-  { name: 'Viajes',      icon: <Plane size={26} />,    color: '#8b5cf6' },
-  { name: 'Moda',        icon: <ShoppingBag size={26} />, color: '#ec4899' },
-]
+import Loader from '../ui/Loader'
 
 export default function CategoryGrid() {
-  const { setFilter } = useAppStore()
+  const categoryIcons = {
+    'Restaurantes': <Utensils size={28}/>,  
+    'Automotriz':   <Car size={28} />,     
+    'Entretenimiento': <Gamepad size={28} />,     
+    'Salud':        <HeartPulse size={28} />, 
+    'Tecnología':   <Laptop size={28} />, 
+    'Belleza' : <Rose size={28} />, 
+  }
+
+  const IconColors = {
+    'Restaurantes': "#007BFF",  
+    'Automotriz': "#28A745",     
+    'Entretenimiento': "#FFC107",     
+    'Salud': "#6F42C1", 
+    'Tecnología': "#007BFF", 
+    'Belleza' : "#FF5733", 
+  }
+
+
+  const { setFilter, fetchCategories, loading, error, headerCategories } = useAppStore()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    fetchCategories()
+  }, [])
 
   const handleSelect = (cat) => {
     setFilter('category', cat)
     navigate('/ofertas')
+  }
+
+  if (loading) {
+    return <Loader/>
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>  
   }
 
   return (
@@ -35,18 +59,22 @@ export default function CategoryGrid() {
         </div>
 
         <div className={styles.grid}>
-          {CATEGORY_DATA.map(cat => (
-            <button
-              key={cat.name}
-              className={styles.card}
-              onClick={() => handleSelect(cat.name)}
-              style={{ '--cat-color': cat.color }}
-            >
-              <span className={styles.icon}>{cat.icon}</span>
-              <span className={styles.name}>{cat.name}</span>
-              <ArrowRight size={13} className={styles.arrow} />
-            </button>
-          ))}
+          {headerCategories?.map((cat) => {
+            const Icon = categoryIcons[cat.nombre_rubro] || null  
+            const Colors = IconColors[cat.nombre_rubro] || null  
+            return (
+              <button
+                key={cat.nombre_rubro}
+                className={`${styles.card}`}
+                onClick={() => handleSelect(cat.nombre_rubro)}
+                style={{ '--cat-color': Colors}}
+              >
+                <span className={styles.icon}>{Icon}</span>
+                <span className={styles.name}>{cat.nombre_rubro}</span>
+                <ArrowRight size={13} className={styles.arrow} />
+              </button>
+            )
+          })}
         </div>
       </div>
     </section>
