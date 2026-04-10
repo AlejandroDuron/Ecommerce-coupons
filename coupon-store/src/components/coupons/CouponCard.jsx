@@ -1,7 +1,7 @@
 // components/coupons/CouponCard.jsx
 import { useState } from 'react'
-import { getCouponStatus, COUPON_STATUS_LABELS } from '../../utils/couponHelpers'
-import { expiryLabel } from '../../utils/formatters'
+import { getCouponStatus, COUPON_STATUS_LABELS } from '../../utils/helpers/couponHelpers'
+import { expiryLabel } from '../../utils/helpers/formatters'
 import { Utensils, Laptop, Ticket, QrCode, Car, Gamepad, HeartPulse, Rose } from 'lucide-react'
 import CouponModal from './CouponModal'
 import Badge from '../ui/Badge'

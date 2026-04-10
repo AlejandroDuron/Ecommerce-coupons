@@ -1,15 +1,15 @@
 // components/layout/Header.jsx
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
-import { useCart } from '../../context/CartContext'
+import { useAuth } from '../../context/auth/AuthContext'
+import { useCart } from '../../context/cart/CartContext'
 import useAppStore from '../../store/useAppStore'
-import { Zap, Search, Ticket, ChevronDown, LogOut, User } from 'lucide-react'
+import { Zap, Search, Ticket, ChevronDown, LogOut, ShoppingCart } from 'lucide-react'
 import styles from './Header.module.css'
 
 export default function Header() {
   const { user, logout } = useAuth()
-  const { items } = useCart()
+  const { itemCount, feedback, dismissFeedback } = useCart()
   const { filters, setFilter, categories } = useAppStore()
   const navigate = useNavigate()
 
@@ -23,6 +23,17 @@ export default function Header() {
     window.addEventListener('scroll', fn)
     return () => window.removeEventListener('scroll', fn)
   }, [])
+
+  useEffect(() => {
+    if (!feedback) return undefined
+
+    const onEscape = (event) => {
+      if (event.key === 'Escape') dismissFeedback()
+    }
+
+    window.addEventListener('keydown', onEscape)
+    return () => window.removeEventListener('keydown', onEscape)
+  }, [dismissFeedback, feedback])
 
   const handleSearch = (e) => {
     e.preventDefault()
@@ -64,10 +75,14 @@ export default function Header() {
           <NavLink to="/ofertas" className={({ isActive }) => isActive ? styles.navLinkActive : styles.navLink}>
             Ofertas
           </NavLink>
+          <NavLink to="/carrito" className={({ isActive }) => isActive ? styles.cartLinkActive : styles.cartLink}>
+            <ShoppingCart size={16} />
+            <span>Carrito</span>
+            {itemCount > 0 && <span className={styles.badge}>{itemCount}</span>}
+          </NavLink>
           {user && (
             <NavLink to="/mis-cupones" className={({ isActive }) => isActive ? styles.navLinkActive : styles.navLink}>
               Mis Cupones
-              {items.length > 0 && <span className={styles.badge}>{items.length}</span>}
             </NavLink>
           )}
           {user ? (
@@ -114,6 +129,9 @@ export default function Header() {
             />
           </form>
           <Link to="/ofertas" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Ofertas</Link>
+          <Link to="/carrito" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
+            Carrito {itemCount > 0 ? `(${itemCount})` : ''}
+          </Link>
           {user && (
             <Link to="/mis-cupones" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Mis Cupones</Link>
           )}
@@ -121,6 +139,14 @@ export default function Header() {
             ? <button className={`${styles.mobileLink} btn-ghost`} onClick={handleLogout}>Cerrar Sesión</button>
             : <Link to="/auth" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Ingresar / Registrarse</Link>
           }
+        </div>
+      )}
+      {feedback && (
+        <div className={`${styles.toast} ${styles[`toast${feedback.type[0].toUpperCase()}${feedback.type.slice(1)}`]}`}>
+          <span>{feedback.message}</span>
+          <button className={styles.toastClose} onClick={dismissFeedback} aria-label="Cerrar mensaje">
+            ×
+          </button>
         </div>
       )}
 

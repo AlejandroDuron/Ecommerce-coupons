@@ -1,6 +1,7 @@
 /* pages/Checkout.module.css */
 .main { padding: 2rem 0 5rem; }
 .inner { max-width: 560px; }
+.innerWide { max-width: 1080px; }
 
 /* Steps bar */
 .stepsBar {
@@ -60,6 +61,30 @@
 /* Step common */
 .step { display: flex; flex-direction: column; gap: 1.25rem; }
 .stepTitle { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em; }
+.stepHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.backLink {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.backLink:hover { color: var(--green); }
+
+.checkoutLayout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 920px) {
+  .checkoutLayout {
+    grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+    align-items: start;
+  }
+}
 
 /* Cart items */
 .itemList { display: flex; flex-direction: column; gap: 0.75rem; }
@@ -75,9 +100,23 @@
 .itemInfo { display: flex; flex-direction: column; gap: 0.2rem; }
 .itemCompany { font-size: 0.7rem; color: var(--muted); font-family: var(--font-mono); text-transform: uppercase; }
 .itemTitle { font-size: 0.9rem; font-weight: 600; }
+.itemMeta { font-size: 0.72rem; color: var(--muted); }
 .itemPrices { display: flex; flex-direction: column; align-items: flex-end; gap: 0.1rem; }
 .itemFinal { font-weight: 700; color: var(--green); font-family: var(--font-mono); }
 .itemOrig { font-size: 0.75rem; color: var(--muted); text-decoration: line-through; }
+
+.orderCard {
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
+
+.orderTitle {
+  font-size: 1rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
 
 /* Summary */
 .summary {

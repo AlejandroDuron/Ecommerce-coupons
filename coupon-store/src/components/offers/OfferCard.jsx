@@ -1,28 +1,26 @@
 // components/offers/OfferCard.jsx
-import { Link, useNavigate } from 'react-router-dom' // <-- Agregamos useNavigate
-import { useCart } from '../../context/CartContext'
-import { formatPrice, expiryLabel, daysUntil } from '../../utils/formatters'
+import { Link, useNavigate } from 'react-router-dom'
+import { useCart } from '../../context/cart/CartContext'
+import { formatPrice, expiryLabel, daysUntil } from '../../utils/helpers/formatters'
 import { Clock, Calendar, Star, ShoppingCart, ArrowRight, Check, Ticket, ArrowBigDownDash } from 'lucide-react'
 import styles from './OfferCard.module.css'
 
 export default function OfferCard({ offer }) {
   const { addToCart, items } = useCart()
-  const navigate = useNavigate() // <-- Inicializamos navegación
+  const navigate = useNavigate() // Inicializamos navegación
   const inCart = items.some(i => i.offer.id === offer.id)
 
   const days = daysUntil(offer.expires_at)
   const urgent = days !== null && days <= 3
-  const cuponsAvilable = offer.available <=4
+  const cuponsAvilable = (offer.available ?? offer.stock ?? 0) <= 4
 
   const initials = offer.company?.slice(0, 2).toUpperCase() || '??'
 
-  // <-- Nueva función que guarda y redirige
+  // guarda carrito y redirige
   const handleAddToCart = (e) => {
     e.preventDefault();
-    if (!inCart) {
-      addToCart(offer);
-    }
-    navigate('/checkout');
+    addToCart(offer);
+    navigate('/carrito');
   };
 
   return (
@@ -62,7 +60,7 @@ export default function OfferCard({ offer }) {
 
         <div className={`${styles.expiry} ${cuponsAvilable ? styles.low : ''}`}>
           {urgent ? <ArrowBigDownDash size={12} /> : <Ticket size={12} />}
-          <p>Cupones disponibles: {offer.available}</p>
+          <p>Cupones disponibles: {offer.available ?? offer.stock ?? 0}</p>
         </div>
 
         <div className={styles.actions}>
@@ -71,10 +69,10 @@ export default function OfferCard({ offer }) {
           </Link>
           <button
             className={`btn btn-primary ${styles.buyBtn}`}
-            onClick={handleAddToCart} // <-- Usamos la nueva función
+            onClick={handleAddToCart} 
             // Eliminamos el disabled={inCart} para permitir ir al checkout
           >
-            {inCart ? <><Check size={13} /> Ir a pagar</> : <><ShoppingCart size={13} /> Comprar</>}
+            {inCart ? <><Check size={13} /> Ver carrito</> : <><ShoppingCart size={13} /> Agregar</>}
           </button>
         </div>
       </div>

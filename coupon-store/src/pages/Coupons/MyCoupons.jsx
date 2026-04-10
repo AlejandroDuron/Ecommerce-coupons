@@ -1,12 +1,12 @@
 // pages/MyCoupons.jsx
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-import useAppStore from '../store/useAppStore'
-import { getCouponStatus } from '../utils/couponHelpers'
-import CouponCard from '../components/coupons/CouponCard'
-import Loader from '../components/ui/Loader'
-import EmptyState from '../components/ui/EmptyState'
+import { useAuth } from '../../context/auth/AuthContext';
+import useAppStore from '../../store/useAppStore'
+import { getCouponStatus } from '../../utils/helpers/couponHelpers'
+import CouponCard from '../../components/coupons/CouponCard'
+import Loader from '../../components/ui/Loader'
+import EmptyState from '../../components/ui/EmptyState'
 import styles from './MyCoupons.module.css'
 
 const TABS = ['active', 'used', 'expired']

@@ -1,10 +1,10 @@
 // pages/OfferDetail.jsx
 import { useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import useAppStore from '../store/useAppStore'
-import { useCart } from '../context/CartContext'
-import { formatPrice, expiryLabel, daysUntil } from '../utils/formatters'
-import Loader from '../components/ui/Loader'
+import useAppStore from '../../store/useAppStore'
+import { useCart } from '../../context/cart/CartContext';
+import { formatPrice, expiryLabel, daysUntil } from '../../utils/helpers/formatters'
+import Loader from '../../components/ui/Loader'
 import styles from './OfferDetail.module.css'
 
 export default function OfferDetail() {
@@ -21,8 +21,7 @@ export default function OfferDetail() {
   const inCart = items.some(i => i.offer.id === offer?.id)
 
   const handleBuy = () => {
-    if (offer && !inCart) addToCart(offer)
-    navigate('/checkout')
+    if (offer) addToCart(offer)
   }
 
   if (loading && !offer) return <Loader fullscreen />
@@ -111,6 +110,9 @@ export default function OfferDetail() {
               <button className={`btn btn-primary ${styles.buyBtn}`} onClick={handleBuy}>
                 {inCart ? 'Ir al checkout →' : 'Comprar Cupón →'}
               </button>
+              <Link to="/carrito" className={`btn btn-outline ${styles.cartBtn}`}>
+                Ver carrito →
+              </Link>
 
               <p className={styles.secure}>🔒 Pago seguro garantizado</p>
             </div>

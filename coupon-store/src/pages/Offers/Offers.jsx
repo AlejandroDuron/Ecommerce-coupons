@@ -1,10 +1,10 @@
 // pages/Offers.jsx
 import { useEffect, useState } from 'react'
-import useAppStore from '../store/useAppStore'
-import OfferCard from '../components/offers/OfferCard'
-import OfferFilters from '../components/offers/OfferFilters'
-import Loader from '../components/ui/Loader'
-import EmptyState from '../components/ui/EmptyState'
+import useAppStore from '../../store/useAppStore'
+import OfferCard from '../../components/offers/OfferCard'
+import OfferFilters from '../../components/offers/OfferFilters'
+import Loader from '../../components/ui/Loader'
+import EmptyState from '../../components/ui/EmptyState'
 import styles from './Offers.module.css'
 
 const PAGE_SIZE = 9

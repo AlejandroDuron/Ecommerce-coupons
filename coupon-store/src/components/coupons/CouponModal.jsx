@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import styles from './CouponModal.module.css'
-// 1. Importamos la utilidad que creamos en src/utils/generatePDF.js
-import { downloadCouponPDF } from '../../utils/generatePDF'
+import { downloadCouponPDF } from '../../utils/pdf/generatePDF'
 
 export default function CouponModal({ coupon, onClose }) {
   // Cerrar con Escape

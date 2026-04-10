@@ -1,17 +1,18 @@
 // App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { AuthProvider } from './context/AuthContext'
-import { CartProvider } from './context/CartContext'
+import { AuthProvider } from './context/auth/AuthContext'
+import { CartProvider } from './context/cart/CartContext'
 import PrivateRoute from './routes/PrivateRoute'
-import Header from './components/layout/Header'
-import Footer from './components/layout/Footer'
-import Home from './pages/Home'
-import Offers from './pages/Offers'
-import OfferDetail from './pages/OfferDetail'
-import Auth from './pages/Auth'
-import MyCoupons from './pages/MyCoupons'
-import Checkout from './pages/Checkout'
-import NotFound from './pages/NotFound'
+import Header from './components/common/Header'
+import Footer from './components/common/Footer'
+import Home from './pages/Home/Home'
+import Offers from './pages/Offers/Offers'
+import OfferDetail from './pages/OfferDetail/OfferDetail'
+import Auth from './pages/Auth/Auth'
+import MyCoupons from './pages/Coupons/MyCoupons'
+import Checkout from './pages/Checkout/Checkout'
+import Cart from './pages/Cart/Cart'
+import NotFound from './pages/NotFound/NotFound'
 
 // Layout que envuelve Header + contenido + Footer
 // El padding-top compensa el header fijo (60px barra principal + ~38px categorías)
@@ -35,6 +36,7 @@ export default function App() {
             <Route path="/" element={<Layout><Home /></Layout>} />
             <Route path="/ofertas" element={<Layout><Offers /></Layout>} />
             <Route path="/ofertas/:id" element={<Layout><OfferDetail /></Layout>} />
+            <Route path="/carrito" element={<Layout><Cart /></Layout>} />
             <Route path="/auth" element={<Auth />} />
 
             {/* Rutas privadas (requieren login) */}

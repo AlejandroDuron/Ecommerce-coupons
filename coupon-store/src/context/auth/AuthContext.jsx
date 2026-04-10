@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, useEffect } from 'react'
-import { supabase } from '../utils/supabaseClient'
+import { supabase } from '../../utils/api/supabaseClient';
 
 const initialState = {
   user:    null,

@@ -1,6 +1,6 @@
 // store/useAppStore.js
 import { create } from 'zustand'
-import { supabase } from '../utils/supabaseClient'
+import { supabase } from '../utils/api/supabaseClient';
 
 // Store 
 const useAppStore = create((set, get) => ({
@@ -54,6 +54,7 @@ const useAppStore = create((set, get) => ({
           image_url,
           stock,
           empresas (
+            codigo_empresa,
             nombre_empresa,
             rubros (
               nombre_rubro
@@ -70,6 +71,7 @@ const useAppStore = create((set, get) => ({
         id: oferta.id,
         title: oferta.titulo,
         company: oferta.empresas?.nombre_empresa || 'Empresa Desconocida',
+        company_code: oferta.empresas?.codigo_empresa || 'GEN',
         category: oferta.empresas?.rubros?.nombre_rubro || 'General',
         discount_pct: Math.round((1 - (oferta.precio_oferta / oferta.precio_regular)) * 100),
         original_price: oferta.precio_regular,
@@ -78,6 +80,8 @@ const useAppStore = create((set, get) => ({
         description: oferta.descripcion,
         expires_at: oferta.fecha_fin,
         available: oferta.stock,
+        stock: oferta.stock,
+        cantidad_limite: oferta.cantidad_limite,
         featured: true, // Podríamos agregar un campo en la BD para esto, por ahora lo dejamos así
       }));
 
