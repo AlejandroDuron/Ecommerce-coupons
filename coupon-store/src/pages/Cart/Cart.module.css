@@ -1,41 +1,280 @@
-.main { padding: 2rem 0 5rem; }
-.hero { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; }
-.eyebrow { font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--green); margin-bottom: 0.45rem; }
-.title { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.5rem; }
-.subtitle { color: var(--muted); max-width: 680px; font-size: 0.95rem; }
-.layout { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
-@media (min-width: 960px) { .layout { grid-template-columns: minmax(0, 2fr) minmax(320px, 0.95fr); align-items: start; } }
-.listCard, .summaryCard, .emptyCard { padding: 1.5rem; }
-.cardHead, .summaryHead { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; }
-.sectionTitle { font-size: 1.1rem; font-weight: 800; }
-.sectionMeta { color: var(--muted); font-size: 0.82rem; }
-.items { display: flex; flex-direction: column; gap: 1rem; }
-.item { display: grid; grid-template-columns: 1fr; gap: 1rem; padding: 1rem 0; border-top: 1px solid var(--border); }
-@media (min-width: 720px) { .item { grid-template-columns: minmax(0, 1fr) auto; align-items: center; } }
-.itemInfo { display: flex; flex-direction: column; gap: 0.35rem; }
-.company { font-size: 0.72rem; color: var(--muted); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; }
-.itemTitle { font-size: 1rem; font-weight: 700; }
-.stock { color: var(--muted); font-size: 0.82rem; }
-.removeBtn { width: fit-content; background: transparent; border: none; color: #ff8080; font-size: 0.82rem; padding: 0; }
-.itemControls { display: grid; grid-template-columns: 1fr; gap: 0.9rem; }
-@media (min-width: 720px) { .itemControls { grid-template-columns: auto auto auto; align-items: center; } }
-.priceBlock { display: flex; flex-direction: column; align-items: flex-start; gap: 0.15rem; }
-.finalPrice { color: var(--green); font-family: var(--font-mono); font-weight: 700; }
-.originalPrice { color: var(--muted); font-size: 0.78rem; text-decoration: line-through; }
-.quantityWrap { display: inline-flex; align-items: center; gap: 0.45rem; background: var(--dark2); border: 1px solid var(--border); border-radius: 999px; padding: 0.3rem; }
-.qtyBtn { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--dark3); color: var(--white); display: inline-flex; align-items: center; justify-content: center; }
-.qtyBtn:disabled { opacity: 0.45; cursor: not-allowed; }
-.qtyInput { width: 52px; border: none; background: transparent; color: var(--white); text-align: center; font-family: var(--font-mono); font-size: 0.95rem; }
-.qtyInput:focus { outline: none; }
-.lineTotal { text-align: right; font-size: 1rem; font-weight: 800; font-family: var(--font-mono); }
-.summaryCard { position: sticky; top: 110px; }
-.summaryRows { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.25rem; }
-.summaryRow { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 0.92rem; }
-.savings { color: var(--green); }
-.summaryTotal { color: var(--white); font-size: 1.08rem; font-weight: 700; border-top: 1px solid var(--border); padding-top: 0.85rem; }
-.checkoutBtn, .secondaryBtn { width: 100%; justify-content: center; }
-.secondaryBtn { margin-top: 0.75rem; }
-.authNote { margin-top: 0.85rem; color: var(--muted); font-size: 0.8rem; text-align: center; }
-.emptyCard { min-height: 360px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; text-align: center; }
-.emptyCard p { color: var(--muted); max-width: 420px; }
-.emptyIcon { width: 72px; height: 72px; border-radius: 50%; background: var(--green-bg); color: var(--green); display: inline-flex; align-items: center; justify-content: center; }
+.main {
+    padding: 2rem 0 5rem;
+}
+
+.hero {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--green);
+    margin-bottom: 0.45rem;
+}
+
+.title {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: var(--muted);
+    max-width: 680px;
+    font-size: 0.95rem;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 960px) {
+    .layout {
+        grid-template-columns: minmax(0, 2fr) minmax(320px, 0.95fr);
+        align-items: start;
+    }
+}
+
+.listCard,
+.summaryCard,
+.emptyCard {
+    padding: 1.5rem;
+}
+
+.cardHead,
+.summaryHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.sectionTitle {
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.sectionMeta {
+    color: var(--muted);
+    font-size: 0.82rem;
+}
+
+.items {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.item {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-top: 1px solid var(--border);
+}
+
+@media (min-width: 720px) {
+    .item {
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+    }
+}
+
+.itemInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.company {
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.itemTitle {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.stock {
+    color: var(--muted);
+    font-size: 0.82rem;
+}
+
+.removeBtn {
+    width: fit-content;
+    background: transparent;
+    border: none;
+    color: #ff8080;
+    font-size: 0.82rem;
+    padding: 0;
+}
+
+.itemControls {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+}
+
+@media (min-width: 720px) {
+    .itemControls {
+        grid-template-columns: auto auto auto;
+        align-items: center;
+    }
+}
+
+.priceBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+}
+
+.finalPrice {
+    color: var(--green);
+    font-family: var(--font-mono);
+    font-weight: 700;
+}
+
+.originalPrice {
+    color: var(--muted);
+    font-size: 0.78rem;
+    text-decoration: line-through;
+}
+
+.quantityWrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: var(--dark2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.3rem;
+}
+
+.qtyBtn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: var(--dark3);
+    color: var(--white);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qtyBtn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.qtyInput {
+    width: 52px;
+    border: none;
+    background: transparent;
+    color: var(--white);
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+}
+
+.qtyInput:focus {
+    outline: none;
+}
+
+.lineTotal {
+    text-align: right;
+    font-size: 1rem;
+    font-weight: 800;
+    font-family: var(--font-mono);
+}
+
+.summaryCard {
+    position: sticky;
+    top: 110px;
+}
+
+.summaryRows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.summaryRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--muted);
+    font-size: 0.92rem;
+}
+
+.savings {
+    color: var(--green);
+}
+
+.summaryTotal {
+    color: var(--white);
+    font-size: 1.08rem;
+    font-weight: 700;
+    border-top: 1px solid var(--border);
+    padding-top: 0.85rem;
+}
+
+.checkoutBtn,
+.secondaryBtn {
+    width: 100%;
+    justify-content: center;
+}
+
+.secondaryBtn {
+    margin-top: 0.75rem;
+}
+
+.authNote {
+    margin-top: 0.85rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.emptyCard {
+    min-height: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    text-align: center;
+}
+
+.emptyCard p {
+    color: var(--muted);
+    max-width: 420px;
+}
+
+.emptyIcon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--green-bg);
+    color: var(--green);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
