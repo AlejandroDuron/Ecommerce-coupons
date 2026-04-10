@@ -1,3 +1,4 @@
+// pages/Home.jsx
 import { useEffect } from 'react'
 import useAppStore from '../../store/useAppStore'
 import HeroSection from '../../components/home/HeroSection'
