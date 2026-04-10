@@ -57,9 +57,12 @@ src/
 │       └── Badge.jsx          ← Badge de estado (activo/usado/vencido/descuento)
 │
 └── utils/
-    ├── formatters.js          ← Formateo de precios, fechas, porcentajes
-    ├── couponHelpers.js       ← Lógica de estado de cupones y generación de código
-    └── supabaseClient.js      ← Instancia de Supabase (stub para conectar)
+│   ├── formatters.js          ← Formateo de precios, fechas, porcentajes
+│   ├── couponHelpers.js       ← Lógica de estado de cupones y generación de código
+│   └── supabaseClient.js      ← Instancia de Supabase (stub para conectar)
+└── App.jsx
+└── index.css
+│
 ```
 
 ## Flujo de datos
